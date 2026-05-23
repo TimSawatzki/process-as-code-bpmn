@@ -316,6 +316,7 @@ function setupNavigation() {
         setTimeout(() => {
           try {
             const canvas = bpmnViewer.get('canvas');
+            canvas.resized();
             canvas.zoom('fit-viewport');
           } catch (e) {
             console.error('BPMN fit viewport error:', e);
