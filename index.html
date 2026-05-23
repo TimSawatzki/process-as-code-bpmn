@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Process-as-Code BPMN Visualizer & Portal</title>
+  <link rel="stylesheet" href="styles.css">
+  <!-- FontAwesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- bpmn-js viewer CDN -->
+  <script src="https://unpkg.com/bpmn-js@17.11.1/dist/bpmn-viewer.development.js"></script>
+</head>
+<body>
+  <div class="app-container">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">P</div>
+        <span class="brand-name">Process-As-Code</span>
+      </div>
+      <nav class="nav-menu">
+        <li>
+          <a class="nav-item active" data-view="dashboard">
+            <i class="fa-solid fa-chart-line"></i> Dashboard
+          </a>
+        </li>
+        <li>
+          <a class="nav-item" data-view="bpmn">
+            <i class="fa-solid fa-diagram-project"></i> BPMN Visualizer
+          </a>
+        </li>
+        <li>
+          <a class="nav-item" data-view="roles">
+            <i class="fa-solid fa-users"></i> Roles
+          </a>
+        </li>
+        <li>
+          <a class="nav-item" data-view="artifacts">
+            <i class="fa-solid fa-file-code"></i> Artifacts
+          </a>
+        </li>
+        <li>
+          <a class="nav-item" data-view="glossary">
+            <i class="fa-solid fa-book"></i> Glossary
+          </a>
+        </li>
+      </nav>
+      <div class="sidebar-footer">
+        v1.0.0 &bull; BPMN 2.0
+      </div>
+    </aside>
+
+    <!-- Main Content Panel -->
+    <main class="main-content">
+      
+      <!-- Top Bar (Title & Search) -->
+      <header class="topbar">
+        <h1 class="page-title" id="page-title-text">Dashboard</h1>
+        <div class="search-container">
+          <i class="fa-solid fa-magnifying-glass search-icon"></i>
+          <input type="text" class="search-input" id="search-input" placeholder="Search roles, artifacts, glossary...">
+        </div>
+      </header>
+
+      <!-- View: Dashboard -->
+      <section class="view-container active" id="view-dashboard">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon primary">
+              <i class="fa-solid fa-arrows-spin"></i>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value">1</span>
+              <span class="stat-label">Active Processes</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon success">
+              <i class="fa-solid fa-users-gear"></i>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value">4</span>
+              <span class="stat-label">Process Roles</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon warning">
+              <i class="fa-solid fa-boxes-stacked"></i>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value">4</span>
+              <span class="stat-label">Outputs & Artifacts</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <h2 class="panel-title">Model Overview: Software Release Lifecycle</h2>
+          </div>
+          <p style="color: var(--text-muted); line-height: 1.6; margin-bottom: 16px;">
+            Our process is modeled completely as code. It defines a standard delivery pipeline integrating continuous integration (CI) automation, quality assurance gates, security check sign-offs, and canary rollouts to production.
+          </p>
+          <div class="guide-list">
+            <div class="guide-item">
+              <span class="guide-step">01</span>
+              <div>
+                <strong style="display: block;">Trigger & Review</strong>
+                <span style="color: var(--text-muted); font-size: 0.875rem;">Developers submit Pull Requests, starting the review sequence.</span>
+              </div>
+            </div>
+            <div class="guide-item">
+              <span class="guide-step">02</span>
+              <div>
+                <strong style="display: block;">Continuous Integration (CI)</strong>
+                <span style="color: var(--text-muted); font-size: 0.875rem;">Automated scripts build and execute unit and integration tests.</span>
+              </div>
+            </div>
+            <div class="guide-item">
+              <span class="guide-step">03</span>
+              <div>
+                <strong style="display: block;">Staging QA & Compliance</strong>
+                <span style="color: var(--text-muted); font-size: 0.875rem;">Manual exploratory testing and regulatory checks are carried out.</span>
+              </div>
+            </div>
+            <div class="guide-item">
+              <span class="guide-step">04</span>
+              <div>
+                <strong style="display: block;">Rollout & Telemetry</strong>
+                <span style="color: var(--text-muted); font-size: 0.875rem;">The Release Manager signs off, triggering automated production deployment.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- View: BPMN Visualizer -->
+      <section class="view-container" id="view-bpmn">
+        <div class="panel" style="margin-bottom: 0; height: calc(100vh - 160px); display: flex; flex-direction: column;">
+          <div class="panel-header" style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <h2 class="panel-title">Interactive Process Diagram</h2>
+              <span style="color: var(--text-muted); font-size: 0.8rem;">Click on any task or gate element in the model below to view roles and details.</span>
+            </div>
+            <button id="btn-reset-diagram" style="padding: 6px 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--panel-border); color: #fff; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">
+              <i class="fa-solid fa-crop-simple"></i> Reset Zoom
+            </button>
+          </div>
+          <div class="canvas-wrapper" style="flex-grow: 1; height: 100%;">
+            <div id="canvas"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- View: Roles -->
+      <section class="view-container" id="view-roles">
+        <div class="grid-container" id="roles-grid">
+          <!-- Dynamic Role Cards Injection -->
+        </div>
+      </section>
+
+      <!-- View: Artifacts -->
+      <section class="view-container" id="view-artifacts">
+        <div class="grid-container" id="artifacts-grid">
+          <!-- Dynamic Artifact Cards Injection -->
+        </div>
+      </section>
+
+      <!-- View: Glossary -->
+      <section class="view-container" id="view-glossary">
+        <div class="panel">
+          <div class="panel-header">
+            <h2 class="panel-title">Process Nomenclature</h2>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 16px;" id="glossary-list">
+            <!-- Dynamic Glossary Injection -->
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Detail Modal -->
+  <div class="modal-overlay" id="detail-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-title-text">Detail View</h3>
+        <button class="modal-close" id="modal-close-btn">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="modal-body" id="modal-body-content">
+        <!-- Dynamic Modal Info -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="bpmn-data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
