@@ -10,6 +10,7 @@
     activeProcessId: 'software_release',
     bpmnViewer: null,
     bpmnReady: false,
+    bpmnLoading: false,
     sidebarOpen: false
   };
 
@@ -80,7 +81,7 @@
     if (view === 'bpmn' && !state.bpmnReady) {
       initBpmnViewer();
     } else if (view === 'bpmn' && state.bpmnViewer) {
-      setTimeout(() => fitBpmnViewport(), 150);
+      loadProcess(state.activeProcessId);
     }
   }
 
@@ -136,7 +137,6 @@
         state.activeProcessId = card.dataset.process;
         updateProcessSelector();
         navigateTo('bpmn');
-        if (state.bpmnReady) loadProcess(card.dataset.process);
       });
     });
 
@@ -271,6 +271,12 @@
     const proc = ProcessData.getProcess(processId);
     if (!proc) return;
 
+    // Prevent overlapping loads
+    if (state.bpmnLoading) return;
+    state.bpmnLoading = true;
+
+    try {
+
     dom.bpmnCanvas.innerHTML = '<div class="loading-state" style="height:100%;"><i class="fa-solid fa-spinner"></i><p>Loading BPMN diagram…</p></div>';
 
     // Destroy previous viewer
@@ -332,6 +338,10 @@
         try { state.bpmnViewer.get('canvas').zoom('fit-viewport'); } catch(e) {}
       }
     };
+
+    } finally {
+      state.bpmnLoading = false;
+    }
   }
 
   function fitBpmnViewport() {
