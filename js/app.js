@@ -470,16 +470,25 @@
       </div>`;
 
     try {
-      // Try fetching the .bpmn file first (works on servers / GitHub Pages),
-      // fall back to embedded XML if fetch fails (e.g. file:// protocol).
+      // Load BPMN XML: try fetching the .bpmn file on HTTP servers,
+      // use the embedded fallback on file:// or if fetch fails.
       let bpmnXML;
-      try {
-        const response = await fetch('processes/software_release_flow.bpmn');
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        bpmnXML = await response.text();
-      } catch {
-        // Fetch failed — use the embedded fallback from data.js
+
+      if (window.location.protocol === 'file:') {
+        // file:// protocol — fetch() would hang, use embedded XML directly
         bpmnXML = ProcessData.bpmnXML;
+      } else {
+        // HTTP(S) — try fetch with a short timeout, fall back to embedded
+        try {
+          const controller = new AbortController();
+          const timeout = setTimeout(() => controller.abort(), 3000);
+          const response = await fetch('processes/software_release_flow.bpmn', { signal: controller.signal });
+          clearTimeout(timeout);
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          bpmnXML = await response.text();
+        } catch {
+          bpmnXML = ProcessData.bpmnXML;
+        }
       }
 
       // Create viewer
