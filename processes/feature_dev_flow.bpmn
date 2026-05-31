@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  id="Definitions_FeatureDev"
+                  targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:process id="Process_FeatureDev" name="Feature Development Lifecycle" isExecutable="false">
+    <bpmn:startEvent id="StartEvent_FeatureReq" name="Feature Requested">
+      <bpmn:outgoing>Flow_FD1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_FD1" sourceRef="StartEvent_FeatureReq" targetRef="Task_SpecWriting" />
+    <bpmn:userTask id="Task_SpecWriting" name="Write Spec &amp; PRD">
+      <bpmn:incoming>Flow_FD1</bpmn:incoming>
+      <bpmn:outgoing>Flow_FD2</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_FD2" sourceRef="Task_SpecWriting" targetRef="Task_DesignReview" />
+    <bpmn:userTask id="Task_DesignReview" name="Design Review">
+      <bpmn:incoming>Flow_FD2</bpmn:incoming>
+      <bpmn:outgoing>Flow_FD3</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_FD3" sourceRef="Task_DesignReview" targetRef="Gateway_DesignApproved" />
+    <bpmn:exclusiveGateway id="Gateway_DesignApproved" name="Approved?" default="Flow_FD_Revise">
+      <bpmn:incoming>Flow_FD3</bpmn:incoming>
+      <bpmn:outgoing>Flow_FD_Revise</bpmn:outgoing>
+      <bpmn:outgoing>Flow_FD_Yes</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_FD_Revise" name="Revise" sourceRef="Gateway_DesignApproved" targetRef="Task_SpecWriting" />
+    <bpmn:sequenceFlow id="Flow_FD_Yes" name="Yes" sourceRef="Gateway_DesignApproved" targetRef="Task_Implementation" />
+    <bpmn:userTask id="Task_Implementation" name="Implement Feature">
+      <bpmn:incoming>Flow_FD_Yes</bpmn:incoming>
+      <bpmn:outgoing>Flow_FD4</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_FD4" sourceRef="Task_Implementation" targetRef="Task_CodeReview" />
+    <bpmn:userTask id="Task_CodeReview" name="Peer Code Review">
+      <bpmn:incoming>Flow_FD4</bpmn:incoming>
+      <bpmn:outgoing>Flow_FD5</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_FD5" sourceRef="Task_CodeReview" targetRef="Task_QATest" />
+    <bpmn:userTask id="Task_QATest" name="QA Testing">
+      <bpmn:incoming>Flow_FD5</bpmn:incoming>
+      <bpmn:outgoing>Flow_FD6</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_FD6" sourceRef="Task_QATest" targetRef="Task_StagingDeploy" />
+    <bpmn:serviceTask id="Task_StagingDeploy" name="Deploy to Staging">
+      <bpmn:incoming>Flow_FD6</bpmn:incoming>
+      <bpmn:outgoing>Flow_FD7</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_FD7" sourceRef="Task_StagingDeploy" targetRef="Task_ProdDeploy" />
+    <bpmn:serviceTask id="Task_ProdDeploy" name="Deploy to Production">
+      <bpmn:incoming>Flow_FD7</bpmn:incoming>
+      <bpmn:outgoing>Flow_FD8</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_FD8" sourceRef="Task_ProdDeploy" targetRef="EndEvent_FeatureLive" />
+    <bpmn:endEvent id="EndEvent_FeatureLive" name="Feature Live">
+      <bpmn:incoming>Flow_FD8</bpmn:incoming>
+    </bpmn:endEvent>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_FeatureDev">
+    <bpmndi:BPMNPlane id="BPMNPlane_FeatureDev" bpmnElement="Process_FeatureDev">
+      <bpmndi:BPMNShape id="Shape_FD_Start" bpmnElement="StartEvent_FeatureReq">
+        <dc:Bounds x="150" y="120" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="120" y="163" width="100" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_FD_Spec" bpmnElement="Task_SpecWriting">
+        <dc:Bounds x="250" y="98" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_FD_Design" bpmnElement="Task_DesignReview">
+        <dc:Bounds x="410" y="98" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_FD_Gateway" bpmnElement="Gateway_DesignApproved" isMarkerVisible="true">
+        <dc:Bounds x="570" y="113" width="50" height="50" />
+        <bpmndi:BPMNLabel><dc:Bounds x="562" y="170" width="66" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_FD_Implement" bpmnElement="Task_Implementation">
+        <dc:Bounds x="680" y="98" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_FD_CodeReview" bpmnElement="Task_CodeReview">
+        <dc:Bounds x="840" y="98" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_FD_QATest" bpmnElement="Task_QATest">
+        <dc:Bounds x="680" y="230" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_FD_Staging" bpmnElement="Task_StagingDeploy">
+        <dc:Bounds x="840" y="230" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_FD_Prod" bpmnElement="Task_ProdDeploy">
+        <dc:Bounds x="1000" y="230" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_FD_End" bpmnElement="EndEvent_FeatureLive">
+        <dc:Bounds x="1160" y="252" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="1145" y="295" width="66" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Edge_FD1" bpmnElement="Flow_FD1"><di:waypoint x="186" y="138" /><di:waypoint x="250" y="138" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_FD2" bpmnElement="Flow_FD2"><di:waypoint x="350" y="138" /><di:waypoint x="410" y="138" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_FD3" bpmnElement="Flow_FD3"><di:waypoint x="510" y="138" /><di:waypoint x="570" y="138" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_FD_Yes" bpmnElement="Flow_FD_Yes"><di:waypoint x="620" y="138" /><di:waypoint x="680" y="138" /><bpmndi:BPMNLabel><dc:Bounds x="642" y="120" width="18" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_FD_Revise" bpmnElement="Flow_FD_Revise"><di:waypoint x="595" y="113" /><di:waypoint x="595" y="30" /><di:waypoint x="300" y="30" /><di:waypoint x="300" y="98" /><bpmndi:BPMNLabel><dc:Bounds x="455" y="12" width="36" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_FD4" bpmnElement="Flow_FD4"><di:waypoint x="780" y="138" /><di:waypoint x="840" y="138" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_FD5" bpmnElement="Flow_FD5"><di:waypoint x="890" y="178" /><di:waypoint x="890" y="230" /><di:waypoint x="780" y="230" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_FD6" bpmnElement="Flow_FD6"><di:waypoint x="780" y="270" /><di:waypoint x="840" y="270" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_FD7" bpmnElement="Flow_FD7"><di:waypoint x="940" y="270" /><di:waypoint x="1000" y="270" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_FD8" bpmnElement="Flow_FD8"><di:waypoint x="1100" y="270" /><di:waypoint x="1160" y="270" /></bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

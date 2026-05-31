@@ -243,6 +243,86 @@ body {
 .stat-value { font-size:1.5rem; font-weight:700; line-height:1; }
 .stat-label { font-size:0.8rem; color:var(--text-secondary); margin-top:2px; }
 
+/* ---- Section heading ---- */
+.section-heading {
+  font-size:1.05rem; font-weight:600; color:var(--text);
+  margin-bottom:16px; display:flex; align-items:center; gap:8px;
+}
+.section-heading i { color:var(--accent); }
+
+/* ---- Process Cards (Dashboard) ---- */
+.process-card-grid {
+  display:grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap:16px;
+  margin-bottom: 28px;
+}
+
+.process-card {
+  background: var(--surface);
+  border:1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow:hidden;
+  backdrop-filter: blur(10px);
+  transition: all var(--ease);
+  cursor:pointer;
+}
+.process-card:hover {
+  border-color: var(--border-active);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+}
+.process-card-header {
+  padding: 18px 20px 12px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.process-card-header h3 {
+  font-size:0.95rem; font-weight:600;
+  display:flex; align-items:center; gap:8px;
+}
+.process-card-header .fa-chevron-right {
+  color: var(--text-tertiary);
+  transition: transform var(--ease);
+}
+.process-card:hover .fa-chevron-right { transform:translateX(3px); color:var(--accent); }
+.process-card-desc {
+  padding:0 20px 14px;
+  font-size:0.8rem; color:var(--text-secondary);
+  line-height:1.5;
+}
+.process-card-flow {
+  padding:0 14px 14px;
+  display:flex; align-items:flex-start;
+  gap:0;
+  overflow-x:auto;
+}
+.process-card-flow .flow-node { min-width:60px; padding:4px; }
+.process-card-flow .flow-node-icon { width:30px; height:30px; font-size:0.7rem; margin-bottom:3px; }
+.process-card-flow .flow-node-label { font-size:0.6rem; max-width:60px; }
+.process-card-flow .flow-arrow { font-size:0.6rem; }
+
+/* ---- Process Selector (BPMN view) ---- */
+.process-select {
+  padding:6px 30px 6px 10px;
+  background: rgba(255,255,255,0.05);
+  border:1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size:0.8rem; font-weight:500;
+  font-family: inherit;
+  cursor:pointer;
+  outline:none;
+  appearance:none;
+  -webkit-appearance:none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239ca3af' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  transition: border-color var(--ease);
+}
+.process-select:hover { border-color: var(--border-active); }
+.process-select:focus { border-color: var(--accent); }
+.process-select option { background: #1e293b; color: var(--text); }
+
 /* ---- Panels ---- */
 .panel {
   background: var(--surface);
