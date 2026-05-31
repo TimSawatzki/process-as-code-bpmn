@@ -491,6 +491,9 @@
         }
       }
 
+      // Clear the loading spinner before bpmn-js appends its own container
+      dom.bpmnCanvas.innerHTML = '';
+
       // Create viewer
       state.bpmnViewer = new BpmnJS({
         container: dom.bpmnCanvas,
