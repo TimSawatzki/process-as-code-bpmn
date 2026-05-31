@@ -1,70 +1,120 @@
-# Process-as-Code with BPMN 2.0
+# Process-as-Code — BPMN Portal
 
-Welcome to the **Process-as-Code** repository. This project demonstrates how software development and release operations can be modeled, versioned, and visualized as code. By treating process definitions with the same rigor as source code, teams achieve:
-
-1. **Version Control:** Track changes to standard operating procedures (SOPs) over time using Git.
-2. **Auditability:** Every update, approval, and modification is recorded in the Git commit history.
-3. **Execution-Ready Docs:** Linking process diagrams directly to the underlying scripts, roles, and artifacts.
-4. **Interactive Visualization:** Renders standard BPMN 2.0 XML in real-time, removing ambiguity.
+**Model, version, and visualize your software delivery processes as code.** BPMN 2.0 diagrams, roles, artifacts, and glossary — all in one interactive portal, deployable to GitHub Pages.
 
 ---
 
-## Repository Structure
+## Why Process-as-Code?
+
+| Principle | What it means |
+|---|---|
+| **Version Control** | Every process change is tracked in Git — who changed what, when, and why. |
+| **Auditability** | Full commit history for SOPs, approval flows, and release pipelines. |
+| **Single Source of Truth** | The BPMN diagram, roles, and artifacts all live in one repo. |
+| **Interactive** | Click any BPMN element to see linked roles, artifacts, and descriptions. |
+
+---
+
+## What's Inside
 
 ```
 process-as-code-bpmn/
-├── README.md                  # Main overview and setup guide
-├── glossary.md                # Glossary of process terms
-├── docs/                      # Standard Operating Procedure details
-│   ├── roles/                 # Definitions of process actors and responsibilities
+├── index.html                  # Portal entry point
+├── css/
+│   └── styles.css              # Dark glassmorphic theme
+├── js/
+│   ├── data.js                 # Roles, artifacts, glossary, element mappings
+│   └── app.js                  # Application controller & BPMN viewer
+├── processes/
+│   └── software_release_flow.bpmn   # BPMN 2.0 XML (loaded at runtime)
+├── docs/
+│   ├── roles/                  # Role definitions (Markdown)
 │   │   ├── developer.md
 │   │   ├── product_manager.md
 │   │   ├── qa_engineer.md
 │   │   └── release_manager.md
-│   └── artifacts/             # Outputs/deliverables produced during process steps
-│       ├── release_branch.md
+│   └── artifacts/              # Artifact definitions (Markdown)
 │       ├── pull_request.md
+│       ├── release_branch.md
 │       ├── test_report.md
 │       └── deployment_manifest.md
-├── processes/
-│   └── software_release_flow.bpmn  # Standard BPMN 2.0 XML representation of the process
-├── index.html                 # Premium visualizer dashboard
-├── styles.css                 # Custom glassmorphic styling
-├── bpmn-data.js               # Embedded BPMN XML content for CORS-free loading
-└── app.js                     # Client-side interactive visualizer logic
+├── glossary.md                 # Standalone glossary
+└── README.md
 ```
 
 ---
 
-## Getting Started
+## Quick Start
 
-### Method 1: The Quick Start (No Setup)
-Simply double-click or open the [index.html](file:///Users/timsawatzki/.gemini/antigravity/scratch/process-as-code-bpmn/index.html) file directly in any modern browser. 
-*Note: Due to browser CORS policies regarding local file fetching, this method uses a pre-embedded JavaScript representation of the BPMN diagram (`bpmn-data.js`) to display the model instantly.*
+### Option 1: Open directly
+Open `index.html` in any modern browser. The BPMN diagram is fetched from the local `.bpmn` file — works great with GitHub Pages.
 
-### Method 2: Launch a Local Server (Recommended)
-To test dynamic loading of the `.bpmn` files, spin up a local web server:
-
+### Option 2: Local dev server
 ```bash
-# Using Python (standard on macOS)
 python3 -m http.server 8000
+# → http://localhost:8000
 ```
 
-Once running, navigate to:
-```
-http://localhost:8000
-```
+### Option 3: GitHub Pages
+1. Push this repo to GitHub
+2. Go to **Settings → Pages**
+3. Set source to `main` branch, root folder
+4. Your portal is live at `https://<user>.github.io/<repo>/`
 
 ---
 
-## Process Overview: Software Release Lifecycle
+## How the Portal Works
 
-The modeled BPMN diagram (`processes/software_release_flow.bpmn`) illustrates a standard enterprise software release pipeline, including automated checks, loops for bug fixes, manual verifications, and sign-offs.
+| View | What you see |
+|---|---|
+| **Dashboard** | Stats, process flow mini-map (clickable steps) |
+| **BPMN Visualizer** | Full interactive BPMN 2.0 diagram — click elements, zoom, pan |
+| **Roles** | Cards for each process actor — click for responsibilities, permissions, touchpoints |
+| **Artifacts** | Cards for each deliverable — click for contents, lifecycle, validation rules |
+| **Glossary** | All BPMN and process-as-code terminology |
 
-1. **Trigger:** Release Cycle initiated (Feature Complete / Code Freeze).
-2. **Review:** Code review and Pull Request (PR) approval.
-3. **CI Pipeline:** Automated build and unit testing execution.
-4. **Verification:** Deployment to Staging environments for QA verification.
-5. **Sign-off:** Release Manager final check and approval.
-6. **Deployment:** Continuous Deployment (CD) canary release to production.
-7. **End Event:** Deployed and actively monitored.
+Clicking any BPMN element opens a detail modal showing:
+- Element type and description
+- Linked role (click to jump)
+- Linked artifact (click to jump)
+
+---
+
+## The Modeled Process
+
+The `software_release_flow.bpmn` models a standard enterprise release pipeline:
+
+1. **Release Triggered** — Feature freeze reached
+2. **Code Review & PR Approval** — Peer review gate
+3. **CI Build & Tests** — Automated build + unit tests
+4. **Tests Pass?** — Gateway: pass → staging, fail → fix loop
+5. **Staging Deployment & QA** — Manual exploratory testing
+6. **Release Sign-off** — Release Manager approval
+7. **Production Deployment** — Canary rollout
+8. **Deployed & Monitored** — Live in production
+
+---
+
+## Adding Your Own Process
+
+1. **Create a `.bpmn` file** in `processes/` (use [demo.bpmn.io](https://demo.bpmn.io) to model it)
+2. **Define roles** in `js/data.js` under `ProcessData.roles`
+3. **Define artifacts** in `js/data.js` under `ProcessData.artifacts`
+4. **Map elements** in `js/data.js` under `ProcessData.processElements` (link BPMN element IDs to roles/artifacts)
+5. **Update the flow** in `js/data.js` under `ProcessData.processFlow` for the dashboard mini-map
+
+---
+
+## Tech Stack
+
+- **bpmn-js** (v17) — BPMN 2.0 rendering
+- **Font Awesome 6** — Icons
+- **Inter** — Typography
+- **Vanilla JS** — No frameworks, zero build step
+- **CSS Custom Properties** — Theming
+
+---
+
+## License
+
+MIT — use it, remix it, ship it.
